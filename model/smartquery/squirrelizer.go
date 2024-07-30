@@ -32,7 +32,6 @@ func (r *Squirrelizer) BuildSelect(playlistID, userID, orderBy string) (squirrel
 }
 
 func (r *Squirrelizer) BuildRefreshSmartQueryPlaylistSQL(playlistID, userID, smartQuery, orderBy string) (squirrel.InsertBuilder, error) {
-
 	/* From the SQLite documentation
 	 *		The row_number() window function assigns consecutive integers to each row in order of the "ORDER BY" clause within the window-defn
 	 *       	SELECT x, y, row_number() OVER (ORDER BY y) AS row_number FROM t0 ORDER BY x;

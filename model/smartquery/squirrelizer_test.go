@@ -41,7 +41,7 @@ var _ = Describe("Smart SQL Query", func() {
 			gomega.Expect(smartQuery.OrderBy).To(gomega.Equal(""))
 
 			squirrelizer := Squirrelizer{}
-			squirrelizer.BuildRefreshSmartQueryPlaylistSQL("playlist1", "user666", smartQuery.Query, "title")
+			_, err = squirrelizer.BuildRefreshSmartQueryPlaylistSQL("playlist1", "user666", smartQuery.Query, "title")
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
 			expectedSQL := "INSERT INTO playlist_tracks (id,playlist_id,media_file_id) " +
