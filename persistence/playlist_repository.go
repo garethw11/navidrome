@@ -13,6 +13,7 @@ import (
 	"github.com/navidrome/navidrome/log"
 	"github.com/navidrome/navidrome/model"
 	"github.com/navidrome/navidrome/model/criteria"
+	"github.com/navidrome/navidrome/model/smartquery"
 	"github.com/navidrome/navidrome/utils/slice"
 	"github.com/pocketbase/dbx"
 )
@@ -25,25 +26,56 @@ type playlistRepository struct {
 type dbPlaylist struct {
 	model.Playlist `structs:",flatten"`
 	Rules          sql.NullString `structs:"-"`
+	SmartQuery     sql.NullString `structs:"-"`
 }
 
 func (p *dbPlaylist) PostScan() error {
 	if p.Rules.String != "" {
 		return json.Unmarshal([]byte(p.Rules.String), &p.Playlist.Rules)
 	}
+	if p.SmartQuery.String != "" {
+		fmt.Printf("+++ SMART QUERY UNMARSHALL")
+		return json.Unmarshal([]byte(p.SmartQuery.String), &p.Playlist.SmartQuery)
+	}
 	return nil
 }
 
 func (p dbPlaylist) PostMapArgs(args map[string]any) error {
 	var err error
-	if p.Playlist.IsSmartPlaylist() {
-		args["rules"], err = json.Marshal(p.Playlist.Rules)
-		if err != nil {
-			return fmt.Errorf("invalid criteria expression: %w", err)
+	// fmt.Println("++++ PostMapArgs")
+
+	if p.Playlist.IsSmartPlaylist() || p.Playlist.IsSmartQueryPlaylist() {
+		// fmt.Println("++++ smart something")
+
+		if p.Playlist.IsSmartPlaylist() {
+			// fmt.Println("++++ smart playlist NSP")
+
+			args["rules"], err = json.Marshal(p.Playlist.Rules)
+			if err != nil {
+				// fmt.Println("++++ smart playlist NSP ERROR")
+				return fmt.Errorf("invalid criteria expression: %w", err)
+			}
+			// MUST
+			delete(args, "smartQuery")
+			return nil
 		}
-		return nil
+		if p.Playlist.IsSmartQueryPlaylist() {
+			// fmt.Println("++++ smart playlist GARETH SMQ")
+			args["smart_query"], err = json.Marshal(p.Playlist.SmartQuery)
+			if err != nil {
+				// fmt.Println("++++ smart playlist GARETH SMQ ERROR")
+				return fmt.Errorf("invalid criteria expression: %w", err)
+			}
+			// MUST
+			delete(args, "rules")
+			return nil
+		}
+		//		fmt.Println("++++ PostMapArgs FALLING THROUGH")
 	}
+
 	delete(args, "rules")
+	delete(args, "smartQuery")
+	//	fmt.Println("++++ end of postMapArgs")
 	return nil
 }
 
@@ -198,6 +230,10 @@ func (r *playlistRepository) selectPlaylist(options ...model.QueryOptions) Selec
 }
 
 func (r *playlistRepository) refreshSmartPlaylist(pls *model.Playlist) bool {
+	if pls.IsSmartQueryPlaylist() {
+		return r.refreshSmartQueryPlaylist(pls)
+	}
+
 	// Only refresh if it is a smart playlist and was not refreshed in the last 5 seconds
 	if !pls.IsSmartPlaylist() || (pls.EvaluatedAt != nil && time.Since(*pls.EvaluatedAt) < 5*time.Second) {
 		return false
@@ -478,6 +514,68 @@ func (r *playlistRepository) isWritable(playlistId string) bool {
 	}
 	pls, err := r.Get(playlistId)
 	return err == nil && pls.OwnerID == usr.ID
+}
+
+func (r *playlistRepository) refreshSmartQueryPlaylist(pls *model.Playlist) bool {
+	if !pls.IsSmartQueryPlaylist() || (pls.EvaluatedAt != nil && time.Since(*pls.EvaluatedAt) < 5*time.Second) {
+		return false
+	}
+
+	// Never refresh other users' playlists
+	usr := loggedUser(r.ctx)
+	if pls.OwnerID != usr.ID {
+		log.Trace(r.ctx, "Not refreshing smart playlist from other user", "playlist", pls.Name, "id", pls.ID)
+		return false
+	}
+
+	log.Debug(r.ctx, "Refreshing smart playlist", "playlist", pls.Name, "id", pls.ID)
+	start := time.Now()
+
+	// TODO #GW# This - AND SIMILAR - should be within a SQL Transaction (Begin Commit/Rollback)
+	// Remove old tracks
+	del := Delete("playlist_tracks").Where(Eq{"playlist_id": pls.ID})
+	_, err := r.executeSQL(del)
+	if err != nil {
+		log.Error(r.ctx, "Error deleting old smart playlist tracks", "playlist", pls.Name, "id", pls.ID, err)
+		return false
+	}
+
+	orderBy := pls.SmartQuery.OrderBy
+	if orderBy == "" {
+		orderBy = "title"
+	}
+
+	squirrelizer := smartquery.Squirrelizer{}
+	insSql, err := squirrelizer.BuildRefreshSmartQueryPlaylistSQL(pls.ID, userId(r.ctx), pls.SmartQuery.Query, orderBy)
+	if err != nil {
+		log.Error(r.ctx, "Error refreshing smart playlist tracks", "playlist", pls.Name, "id", pls.ID, err)
+		return false
+	}
+
+	_, err = r.executeSQL(insSql)
+	if err != nil {
+		log.Error(r.ctx, "Error refreshing smart playlist tracks", "playlist", pls.Name, "id", pls.ID, err)
+		return false
+	}
+
+	// Update playlist stats
+	err = r.refreshCounters(pls)
+	if err != nil {
+		log.Error(r.ctx, "Error updating smart playlist stats", "playlist", pls.Name, "id", pls.ID, err)
+		return false
+	}
+
+	// Update when the playlist was last refreshed (for cache purposes)
+	updSql := Update(r.tableName).Set("evaluated_at", time.Now()).Where(Eq{"id": pls.ID})
+	_, err = r.executeSQL(updSql)
+	if err != nil {
+		log.Error(r.ctx, "Error updating smart playlist", "playlist", pls.Name, "id", pls.ID, err)
+		return false
+	}
+
+	log.Debug(r.ctx, "Refreshed playlist", "playlist", pls.Name, "id", pls.ID, "numTracks", pls.SongCount, "elapsed", time.Since(start))
+
+	return true
 }
 
 var _ model.PlaylistRepository = (*playlistRepository)(nil)

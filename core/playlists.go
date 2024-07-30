@@ -19,6 +19,7 @@ import (
 	"github.com/navidrome/navidrome/model"
 	"github.com/navidrome/navidrome/model/criteria"
 	"github.com/navidrome/navidrome/model/request"
+	"github.com/navidrome/navidrome/model/smartquery"
 )
 
 type Playlists interface {
@@ -85,6 +86,8 @@ func (s *playlists) parsePlaylist(ctx context.Context, playlistFile string, base
 	switch extension {
 	case ".nsp":
 		return s.parseNSP(ctx, pls, file)
+	case ".smq":
+		return s.parseSMQ(ctx, pls, file)
 	default:
 		return s.parseM3U(ctx, pls, baseDir, file)
 	}
@@ -291,4 +294,36 @@ func (i *nspFile) UnmarshalJSON(data []byte) error {
 	i.Name, _ = m["name"].(string)
 	i.Comment, _ = m["comment"].(string)
 	return json.Unmarshal(data, &i.Criteria)
+}
+
+func (s *playlists) parseSMQ(ctx context.Context, pls *model.Playlist, file io.Reader) (*model.Playlist, error) {
+	scanner := bufio.NewScanner(file)
+	lines := []string{}
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	if len(lines) == 0 {
+		err := errors.New("empty smart query")
+		log.Error(ctx, "Error parsing SmartPlaylist", "playlist", pls.Name, err)
+		return nil, err
+	}
+
+	factory := smartquery.SmartQueryFactory{Definition: lines}
+	smartQuery, err := factory.CreateSmartQuery()
+	if err != nil {
+		log.Error(ctx, "Error parsing SmartPlaylist", "playlist", pls.Name, err)
+		return nil, err
+	}
+
+	err = smartQuery.ValidateQuery()
+	if err != nil {
+		log.Error(ctx, "Error parsing SmartPlaylist", "playlist", pls.Name, err)
+		return nil, err
+	}
+
+	pls.SmartQuery = smartQuery
+	pls.Name = smartQuery.Name
+	pls.Comment = smartQuery.Comment
+	return pls, nil
 }

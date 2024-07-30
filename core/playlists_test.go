@@ -3,10 +3,12 @@ package core
 import (
 	"context"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/navidrome/navidrome/model/criteria"
 	"github.com/navidrome/navidrome/model/request"
+	"github.com/navidrome/navidrome/model/smartquery"
 
 	"github.com/navidrome/navidrome/model"
 	"github.com/navidrome/navidrome/tests"
@@ -39,6 +41,9 @@ var _ = Describe("Playlists", func() {
 				pls, err := ps.ImportFile(ctx, "tests/fixtures", "playlists/pls1.m3u")
 				Expect(err).To(BeNil())
 				Expect(pls.OwnerID).To(Equal("123"))
+				Expect(pls.IsSmartPlaylist()).To(BeFalse())
+				Expect(pls.IsSmartQueryPlaylist()).To(BeFalse())
+				Expect(pls.SmartQuery).To(BeNil())
 				Expect(pls.Tracks).To(HaveLen(3))
 				Expect(pls.Tracks[0].Path).To(Equal("tests/fixtures/test.mp3"))
 				Expect(pls.Tracks[1].Path).To(Equal("tests/fixtures/test.ogg"))
@@ -71,6 +76,36 @@ var _ = Describe("Playlists", func() {
 				Expect(pls.Rules.Order).To(Equal("desc"))
 				Expect(pls.Rules.Limit).To(Equal(100))
 				Expect(pls.Rules.Expression).To(BeAssignableToTypeOf(criteria.All{}))
+				Expect(pls.IsSmartPlaylist()).To(BeTrue())
+				Expect(pls.IsSmartQueryPlaylist()).To(BeFalse())
+				Expect(pls.SmartQuery).To(BeNil())
+			})
+		})
+
+		Describe("SMQ", func() {
+			It("parses well-formed playlists", func() {
+				pls, err := ps.ImportFile(ctx, "tests/fixtures", "playlists/random_album.smq")
+				Expect(err).To(BeNil())
+
+				// tmp must match file contents...be careful of whitespace
+				tmp := []string{"-- comment", "album_id=(SELECT id FROM album ORDER BY random() /* inline comment */ LIMIT 1)",
+					"-- another comment", "ORDER BY disc_number, track_number ASC"}
+				squirrel := smartquery.Squirrelizer{}
+				_, err = squirrel.BuildSelect("playlist1", "user666", "disc_number, track_number ASC")
+				Expect(err).To(BeNil())
+
+				Expect(mp.last).To(Equal(pls))
+				Expect(pls.OwnerID).To(Equal("123"))
+				Expect(pls.Name).To(Equal("Random Album"))
+				Expect(pls.Comment).To(Equal("smart playlist trailing space"))
+				Expect(pls.IsSmartPlaylist()).To(BeFalse())
+				Expect(pls.IsSmartQueryPlaylist()).To(BeTrue())
+				Expect(pls.Rules).To(BeNil())
+				Expect(pls.SmartQuery.Name).To(Equal("Random Album"))
+				Expect(pls.SmartQuery.Comment).To(Equal("smart playlist trailing space"))
+				expectedQuery := strings.Join(tmp, "\n")
+				Expect(pls.SmartQuery.Query).To(Equal(expectedQuery))
+				Expect(pls.SmartQuery.OrderBy).To(Equal("disc_number, track_number ASC"))
 			})
 		})
 	})

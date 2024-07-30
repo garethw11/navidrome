@@ -124,7 +124,7 @@ func (r *playlistTrackRepository) NewInstance() interface{} {
 }
 
 func (r *playlistTrackRepository) isTracksEditable() bool {
-	return r.playlistRepo.isWritable(r.playlistId) && !r.playlist.IsSmartPlaylist()
+	return r.playlistRepo.isWritable(r.playlistId) && !r.playlist.IsSmartPlaylist() && !r.playlist.IsSmartQueryPlaylist()
 }
 
 func (r *playlistTrackRepository) Add(mediaFileIds []string) (int, error) {

@@ -1,0 +1,5 @@
+PLAYLIST name: Random Album, description: smart playlist trailing space    
+-- comment
+album_id=(SELECT id FROM album ORDER BY random() /* inline comment */ LIMIT 1)
+-- another comment
+ORDER BY disc_number, track_number ASC

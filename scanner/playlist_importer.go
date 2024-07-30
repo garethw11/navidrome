@@ -48,6 +48,8 @@ func (s *playlistImporter) processPlaylists(ctx context.Context, dir string) int
 		}
 		if pls.IsSmartPlaylist() {
 			log.Debug("Imported smart playlist", "name", pls.Name, "lastUpdated", pls.UpdatedAt, "path", pls.Path, "numTracks", pls.SongCount)
+		} else if pls.IsSmartQueryPlaylist() {
+			log.Debug("Imported smart query playlist", "name", pls.Name, "lastUpdated", pls.UpdatedAt, "path", pls.Path, "numTracks", pls.SongCount)
 		} else {
 			log.Debug("Imported playlist", "name", pls.Name, "lastUpdated", pls.UpdatedAt, "path", pls.Path, "numTracks", pls.SongCount)
 		}

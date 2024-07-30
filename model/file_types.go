@@ -26,5 +26,5 @@ func IsImageFile(filePath string) bool {
 
 func IsValidPlaylist(filePath string) bool {
 	extension := strings.ToLower(filepath.Ext(filePath))
-	return extension == ".m3u" || extension == ".m3u8" || extension == ".nsp"
+	return extension == ".m3u" || extension == ".m3u8" || extension == ".nsp" || extension == ".smq"
 }

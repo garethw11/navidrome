@@ -8,6 +8,7 @@ import (
 	"github.com/navidrome/navidrome/model"
 	"github.com/navidrome/navidrome/model/criteria"
 	"github.com/navidrome/navidrome/model/request"
+	"github.com/navidrome/navidrome/model/smartquery"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -111,7 +112,7 @@ var _ = Describe("PlaylistRepository", func() {
 		})
 	})
 
-	Context("Smart Playlists", func() {
+	Context("Smart Playlists (nsp)", func() {
 		var rules *criteria.Criteria
 		BeforeEach(func() {
 			rules = &criteria.Criteria{
@@ -143,5 +144,36 @@ var _ = Describe("PlaylistRepository", func() {
 				Expect(repo.Put(&newPls)).To(MatchError(ContainSubstring("invalid criteria expression")))
 			})
 		})
+	})
+
+	Context("Smart Query Playlists", func() {
+		smartQuery := smartquery.SmartQuery{Name: "test1", Comment: "comment1", Query: "query1", OrderBy: "order order"}
+		Context("valid query", func() {
+			Specify("Put/Get", func() {
+				newPls := model.Playlist{Name: "foo", OwnerID: "userid", SmartQuery: &smartQuery}
+				Expect(repo.Put(&newPls)).To(Succeed())
+				savedPls, err := repo.Get(newPls.ID)
+				Expect(err).ToNot(HaveOccurred())
+				got := savedPls.SmartQuery
+				Expect(got).ToNot(BeNil())
+				Expect(got.Name).ToNot(BeNil())
+				Expect(got.Name).To(Equal(smartQuery.Name))
+			})
+		})
+
+		/*
+			Context("invalid rules", func() {
+				It("fails to Put it in the DB", func() {
+					smartQuery := "PLAYLIST name: Destruction, description: trash table\n" +
+						"DELETE FROM media_file"
+
+					// BAD DESIGN - DIRECT ACCESS TO FIELDS WITH NO VALIDATION
+					// SOMETHING Go IS NOT GOOD AT - ENCAPSULATING FIELDS
+					// IF EVERYTHING IS A STRUCT WE ARE REGRESSING BACK TO THE C PROGRAMMING IDIOM
+					newPls := model.Playlist{Name: "foobar", OwnerID: "userid", SmartQuery: smartQuery}
+					Expect(repo.Put(&newPls)).To(MatchError(ContainSubstring("invalid smart playlist expression")))
+				})
+			})
+		*/
 	})
 })

@@ -175,7 +175,7 @@ func (api *Router) buildPlaylist(p model.Playlist) *responses.Playlist {
 	pls.Public = p.Public
 	pls.Created = p.CreatedAt
 	pls.CoverArt = p.CoverArtID().String()
-	if p.IsSmartPlaylist() {
+	if p.IsSmartPlaylist() || p.IsSmartQueryPlaylist() {
 		pls.Changed = time.Now()
 	} else {
 		pls.Changed = p.UpdatedAt

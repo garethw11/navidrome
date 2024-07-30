@@ -1,78 +1,143 @@
-<a href="https://www.navidrome.org"><img src="resources/logo-192x192.png" alt="Navidrome logo" title="navidrome" align="right" height="60px" /></a>
+# A fork of Navidrome Music Server
+## An experiment with a different way to create your own smart playlists
 
-# Navidrome Music Server &nbsp;[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Tired%20of%20paying%20for%20music%20subscriptions%2C%20and%20not%20finding%20what%20you%20really%20like%3F%20Roll%20your%20own%20streaming%20service%21&url=https://navidrome.org&via=navidrome)
+### I endorse Navidrome
 
-[![Last Release](https://img.shields.io/github/v/release/navidrome/navidrome?logo=github&label=latest&style=flat-square)](https://github.com/navidrome/navidrome/releases)
-[![Build](https://img.shields.io/github/actions/workflow/status/navidrome/navidrome/pipeline.yml?branch=master&logo=github&style=flat-square)](https://nightly.link/navidrome/navidrome/workflows/pipeline/master)
-[![Downloads](https://img.shields.io/github/downloads/navidrome/navidrome/total?logo=github&style=flat-square)](https://github.com/navidrome/navidrome/releases/latest)
-[![Docker Pulls](https://img.shields.io/docker/pulls/deluan/navidrome?logo=docker&label=pulls&style=flat-square)](https://hub.docker.com/r/deluan/navidrome)
-[![Dev Chat](https://img.shields.io/discord/671335427726114836?logo=discord&label=discord&style=flat-square)](https://discord.gg/xh7j7yF)
-[![Subreddit](https://img.shields.io/badge/%2Fr%2Fnavidrome-%2B3000-red?logo=reddit)](https://www.reddit.com/r/navidrome/)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
+- _Navidrome is an excellent open source web-based music collection server_
+- _If you have a large music collection and want to host your own Subsonic compatible server, I recommend Navidrome!_
+- _I have tried several self-hosted music servers and Navidrome is IMHO the best Subsonic compatible server._
+- _It is also super easy to set up - I run mine in a Docker container on my NAS_
+- _You dont't have to stick with the Navidrome Web interface either:_
+    - [Airsonic (refix) UI] (https://github.com/tamland/airsonic-refix) is a great open-source browser UI that works seamlessly with Navidrome
+    - [Amperfy] (https://github.com/BLeeEZ/amperfy) is a great open-source iOS client for iPhone and/or iPad, and again it works seamlessly with Navidrome
 
-Navidrome is an open source web-based music collection server and streamer. It gives you freedom to listen to your
-music collection from any browser or mobile device. It's like your personal Spotify!
+### A Brief History Of Playlists
 
+- Basic playlists let you create a sequence of songs (tracks)...nice but how could we make them better?  Shuffle the order? Meh!
+- Streaming music services have their own playlists and suggestions...some people love them but I do not find the "algorithm" all that helpful
+- Music collection servers - for folk like me who already have large music collections - have started to add more sophisticated ways of defining playlists...woo-hoo! :grinning:
 
-**Note**: The `master` branch may be in an unstable or even broken state during development. 
-Please use [releases](https://github.com/navidrome/navidrome/releases) instead of 
-the `master` branch in order to get a stable set of binaries.
+## So what is this fork for?
 
-## [Check out our Live Demo!](https://www.navidrome.org/demo/)
+Navidrome has been adding support for smart playlists for sometime now, great..._however...there are things I want a smart playlist to do that is not currently possible_
 
-__Any feedback is welcome!__ If you need/want a new feature, find a bug or think of any way to improve Navidrome, 
-please file a [GitHub issue](https://github.com/navidrome/navidrome/issues) or join the discussion in our 
-[Subreddit](https://www.reddit.com/r/navidrome/). If you want to contribute to the project in any other way 
-([ui/backend dev](https://www.navidrome.org/docs/developers/), 
-[translations](https://www.navidrome.org/docs/developers/translations/), 
-[themes](https://www.navidrome.org/docs/developers/creating-themes)), please join the chat in our 
-[Discord server](https://discord.gg/xh7j7yF). 
+I wanted to be able to do more...after all, more is more better, right?  
+I am also an album-centric music listener _(is that a thing?  If it wasn't, it is now)_:rofl:
+So, I've had a quick play around with using SQL as the language to define playlists:
 
-## Installation
+_The music collection is a database so a SQL style smart query syntax should allow flexible, sophisticated queries to be created as playlist definitions_
 
-See instructions on the [project's website](https://www.navidrome.org/docs/installation/)
-
-## Cloud Hosting
-
-[PikaPods](https://www.pikapods.com) has partnered with us to offer you an 
-[officially supported, cloud-hosted solution](https://www.navidrome.org/docs/installation/managed/#pikapods). 
-A share of the revenue helps fund the development of Navidrome at no additional cost for you.
-
-[![PikaPods](https://www.pikapods.com/static/run-button.svg)](https://www.pikapods.com/pods?run=navidrome)
-
-## Features
+## You can
  
- - Handles very **large music collections**
- - Streams virtually **any audio format** available
- - Reads and uses all your beautifully curated **metadata**
- - Great support for **compilations** (Various Artists albums) and **box sets** (multi-disc albums)
- - **Multi-user**, each user has their own play counts, playlists, favourites, etc...
- - Very **low resource usage**
- - **Multi-platform**, runs on macOS, Linux and Windows. **Docker** images are also provided
- - Ready to use binaries for all major platforms, including **Raspberry Pi**
- - Automatically **monitors your library** for changes, importing new files and reloading new metadata 
- - **Themeable**, modern and responsive **Web interface** based on [Material UI](https://material-ui.com)
- - **Compatible** with all Subsonic/Madsonic/Airsonic [clients](https://www.navidrome.org/docs/overview/#apps)
- - **Transcoding** on the fly. Can be set per user/player. **Opus encoding is supported**
- - Translated to **various languages**
+ - Make complex (_or simple, not every playlist has to be complicated!_) queries using SQL syntax
+ - BTW, if you don't know SQL, this could be a good excuse to begin your learning!
+ - Your SQL is validated so you can not do anything silly like delete your database tables
+ - Use SQL keywords including DISTINCT LIKE LIMIT
+ - Use SQL behaviours such as subqueries
+ 
+## Which means you can
+ 
+ Pick a random album
+ - Pick a random album by genre
+ - Pick a random album by (artist/album artist)
+ - Pick a random album by a list of (artists/album artists)
+ Write smart queries that include play counts, favourites, etc as criteria...
+ _and many more things_ :wink:
 
-## Documentation
-All documentation can be found in the project's website: https://www.navidrome.org/docs. 
-Here are some useful direct links:
+## How about some examples?
 
-- [Overview](https://www.navidrome.org/docs/overview/)
-- [Installation](https://www.navidrome.org/docs/installation/)
-  - [Docker](https://www.navidrome.org/docs/installation/docker/)
-  - [Binaries](https://www.navidrome.org/docs/installation/pre-built-binaries/)
-  - [Build from source](https://www.navidrome.org/docs/installation/build-from-source/)
-- [Development](https://www.navidrome.org/docs/developers/)
-- [Subsonic API Compatibility](https://www.navidrome.org/docs/developers/subsonic-api/)
+Sure.  Pick a random album...
 
-## Screenshots
+```
+PLAYLIST name: Random Album, description: Pick an album at random
+album_id=(SELECT id FROM album ORDER BY random() LIMIT 1)
+ORDER BY disc_number, track_number ASC
+```
 
-<p align="left">
-    <img height="550" src="https://raw.githubusercontent.com/navidrome/navidrome/master/.github/screenshots/ss-mobile-login.png">
-    <img height="550" src="https://raw.githubusercontent.com/navidrome/navidrome/master/.github/screenshots/ss-mobile-player.png">
-    <img height="550" src="https://raw.githubusercontent.com/navidrome/navidrome/master/.github/screenshots/ss-mobile-album-view.png">
-    <img width="550" src="https://raw.githubusercontent.com/navidrome/navidrome/master/.github/screenshots/ss-desktop-player.png">
-</p>
+Pick a random album by Bill Frisell _(other artists are availble)_
+
+```
+PLAYLIST name: Frisell album, description: Pick a random Bill Frisell album
+album_id = (SELECT id FROM album WHERE album_artist = 'Bill Frisell' ORDER BY random() LIMIT 1)
+ORDER BY disc_number, track_number ASC
+```
+
+Pick 5 random Beatles tracks
+
+```
+PLAYLIST name: Beatles x5, description: Pick 5 random Beatles songs
+id IN (SELECT id FROM media_file WHERE album_artist = 'The Beatles' ORDER BY random() LIMIT 5)
+```
+
+Pick a random album from a list of AC/DC albums
+
+```
+PLAYLIST name: AC/DC Bon Scott, description: Pick a random AC/DC with Bon Scott album from a list
+album_id =
+(SELECT id FROM album WHERE album_artist = 'AC/DC' 
+AND name IN ('Let There Be Rock', 'Powerage', 'Live From the Atlantic Studios')
+ORDER BY random() LIMIT 1)
+ORDER BY disc_number, track_number ASC
+```
+
+Or use a date range
+
+```
+PLAYLIST name: AC/DC Bon Scott, description: Pick a random AC/DC with Bon Scott album released between 1974 and 1979
+album_id =
+(SELECT id FROM album WHERE album_artist = 'AC/DC' 
+AND min_year >='1974'
+AND min_year <= '1979'
+ORDER BY random() LIMIT 1)
+ORDER BY disc_number, track_number ASC
+```
+
+How about a favourite by AC/DC
+
+```
+PLAYLIST name: AC/DC faves, description: Pick a random AC/DC album from your favourites
+album_id =
+(SELECT al.id FROM album al, annotation an 
+WHERE al.album_artist = 'AC/DC' 
+AND an.item_id = al.id
+AND an.starred IS true
+ORDER BY random() LIMIT 1)
+ORDER BY disc_number, track_number ASC
+```
+
+## What do I do with these?
+
+Put them in a file ending with .smq in your music library (doesn't matter where, but I put all mine in the same directory at the top of my music library)
+Navidrome will pick them up when it scans the music library
+
+## How do you develop & test your queries?
+
+You can easily develop, test and tweak your SQL queries against your database (or a copy of) a SQLite-compatible database manager
+- For example, I use the open-sourced [SQLiteStudio] (https://sqlitestudio.pl/) [github] (https://github.com/pawelsalawa/sqlitestudio)
+Replace the `PLAYLIST` line with 
+
+```
+SELECT album_id, album, disc_number, track_number, title FROM media_file WHERE 
+```
+
+_(adjust the fields returned to taste)_
+
+## Shoutouts
+
+I needed a way to validate the SQL.  Maybe I could have done that using Squirel, but I think not, it just looks like (yet another) SQL builder.  What I wanted was a parser with validation.  And [Tree-sitter] (https://tree-sitter.github.io/tree-sitter/) seems to tick all the boxes:
+- GitHub uses Tree-sitter to support in-browser symbolic code navigation in Git repositories
+- [Go bindings coutesy of Maxim Sukharev aka smacker] (https://github.com/smacker/go-tree-sitter) with SQL support
+
+# And finally,
+
+__Any feedback is welcome!__ I created this fork for three reasons
+- To learn Go _(Go is so cute!)_
+- To learn git, github, etc _(grrrr, I still feel like a total noob, neccessary get better :persevere:)_
+- To offer the Navidrome community an idea with a working proof-of-concept that I hope they like
+There is always room for improvement and constructive criticism is welcome - obviously it's incredibly unlikely this fork is perfectly coded and bug-free
+
+## Caution! This is a fork not an official release!
+
+**Disclaimer**: This fork may or may not be in an unstable or even broken state during development. 
+Please only use if you want to experiment with this code - for exmaple, you have already set up your own Navidrome development environment
+If you just want the official Navidrome go get it [here] (https://github.com/navidrome/navidrome)

@@ -57,5 +57,14 @@ var _ = Describe("File Types()", func() {
 		It("returns false for a non-playlist file", func() {
 			Expect(model.IsValidPlaylist("testm3u")).To(BeFalse())
 		})
+
+		It("returns true for a nsp file", func() {
+			Expect(model.IsValidPlaylist(filepath.Join("path", "to", "test.nsp"))).To(BeTrue())
+		})
+
+		It("returns true for a smq file", func() {
+			Expect(model.IsValidPlaylist(filepath.Join("path", "to", "test.smq"))).To(BeTrue())
+		})
+
 	})
 })

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/navidrome/navidrome/model/criteria"
+	"github.com/navidrome/navidrome/model/smartquery"
 )
 
 type Playlist struct {
@@ -29,10 +30,17 @@ type Playlist struct {
 	// SmartPlaylist attributes
 	Rules       *criteria.Criteria `structs:"rules" json:"rules"`
 	EvaluatedAt *time.Time         `structs:"evaluated_at" json:"evaluatedAt"`
+
+	// smart query playlists
+	SmartQuery *smartquery.SmartQuery `structs:"smart_query" json:"smartQuery"`
 }
 
 func (pls Playlist) IsSmartPlaylist() bool {
 	return pls.Rules != nil && pls.Rules.Expression != nil
+}
+
+func (pls Playlist) IsSmartQueryPlaylist() bool {
+	return pls.SmartQuery != nil
 }
 
 func (pls Playlist) MediaFiles() MediaFiles {
