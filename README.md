@@ -1,15 +1,16 @@
 # A fork of Navidrome Music Server
 ## An experiment with a different way to create your own smart playlists
 
-### I endorse Navidrome
+### I endorse Navidrome!
 
 - _Navidrome is an excellent open source web-based music collection server_
 - _If you have a large music collection and want to host your own Subsonic compatible server, I recommend Navidrome!_
 - _I have tried several self-hosted music servers and Navidrome is IMHO the best Subsonic compatible server._
 - _It is also super easy to set up - I run mine in a Docker container on my NAS_
-- _You dont't have to stick with the Navidrome Web interface either:_
-    - [Airsonic (refix) UI] (https://github.com/tamland/airsonic-refix) is a great open-source browser UI that works seamlessly with Navidrome
-    - [Amperfy] (https://github.com/BLeeEZ/amperfy) is a great open-source iOS client for iPhone and/or iPad, and again it works seamlessly with Navidrome
+
+_You don't have to stick with the Navidrome Web interface either:_
+[Airsonic (refix) UI] (https://github.com/tamland/airsonic-refix) is a great open-source browser UI that works seamlessly with Navidrome
+[Amperfy] (https://github.com/BLeeEZ/amperfy) is a great open-source iOS client for iPhone and/or iPad, and again it works seamlessly with Navidrome
 
 ### A Brief History Of Playlists
 
@@ -19,10 +20,12 @@
 
 ## So what is this fork for?
 
-Navidrome has been adding support for smart playlists for sometime now, great..._however...there are things I want a smart playlist to do that is not currently possible_
+Navidrome has been adding support for smart playlists for sometime now, great..._however...there are things I want a smart playlist to do that are not currently possible_
 
 I wanted to be able to do more...after all, more is more better, right?  
-I am also an album-centric music listener _(is that a thing?  If it wasn't, it is now)_:rofl:
+I am an album-centric music listener _(is that a thing?  If it wasn't, it is now)_:rofl: and really like the "Random Album" functionality in the Navidrome GUI.
+I want something similar for playlists so I can easily trigger a random album from a client such as Amperfy.  Or play the playlist on my (somewhat antiquated) Sonos system.
+
 So, I've had a quick play around with using SQL as the language to define playlists:
 
 _The music collection is a database so a SQL style smart query syntax should allow flexible, sophisticated queries to be created as playlist definitions_
@@ -54,7 +57,7 @@ album_id=(SELECT id FROM album ORDER BY random() LIMIT 1)
 ORDER BY disc_number, track_number ASC
 ```
 
-Pick a random album by Bill Frisell _(other artists are availble)_
+Pick a random album by Bill Frisell _(other artists are available)_
 
 ```
 PLAYLIST name: Frisell album, description: Pick a random Bill Frisell album
@@ -107,7 +110,7 @@ ORDER BY disc_number, track_number ASC
 
 ## What do I do with these?
 
-Put them in a file ending with .smq in your music library (doesn't matter where, but I put all mine in the same directory at the top of my music library)
+Put them in a file ending with `.smq` in your music library (doesn't matter where, but I put all mine in the same directory at the top of my music library).
 Navidrome will pick them up when it scans the music library
 
 ## How do you develop & test your queries?
