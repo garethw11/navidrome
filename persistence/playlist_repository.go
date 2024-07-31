@@ -531,7 +531,7 @@ func (r *playlistRepository) refreshSmartQueryPlaylist(pls *model.Playlist) bool
 	log.Debug(r.ctx, "Refreshing smart playlist", "playlist", pls.Name, "id", pls.ID)
 	start := time.Now()
 
-	// TODO #GW# This - AND SIMILAR - should be within a SQL Transaction (Begin Commit/Rollback)
+	// TODO Should be within a SQL Transaction (Begin Commit/Rollback) - how do we do that?
 	// Remove old tracks
 	del := Delete("playlist_tracks").Where(Eq{"playlist_id": pls.ID})
 	_, err := r.executeSQL(del)

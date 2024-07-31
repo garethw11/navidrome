@@ -161,19 +161,15 @@ var _ = Describe("PlaylistRepository", func() {
 			})
 		})
 
-		/*
-			Context("invalid rules", func() {
-				It("fails to Put it in the DB", func() {
-					smartQuery := "PLAYLIST name: Destruction, description: trash table\n" +
-						"DELETE FROM media_file"
-
-					// BAD DESIGN - DIRECT ACCESS TO FIELDS WITH NO VALIDATION
-					// SOMETHING Go IS NOT GOOD AT - ENCAPSULATING FIELDS
-					// IF EVERYTHING IS A STRUCT WE ARE REGRESSING BACK TO THE C PROGRAMMING IDIOM
-					newPls := model.Playlist{Name: "foobar", OwnerID: "userid", SmartQuery: smartQuery}
-					Expect(repo.Put(&newPls)).To(MatchError(ContainSubstring("invalid smart playlist expression")))
-				})
+		/* This test doesn't work because query validation is done when reading from file so arguably this test has no value
+		 * Should we validate SQL before a database "Put" or is it not worth worrying about?
+		Context("invalid rules", func() {
+			It("fails to Put it in the DB", func() {
+				notSoSmartQuery := smartquery.SmartQuery{Name: "Destruction", Comment: "trash table", Query: "DELETE FROM media_file", OrderBy: "title"}
+				newPls := model.Playlist{Name: "foobar", OwnerID: "userid", SmartQuery: &notSoSmartQuery}
+				Expect(repo.Put(&newPls)).To(MatchError(ContainSubstring("invalid smart playlist expression")))
 			})
+		})
 		*/
 	})
 })
