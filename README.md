@@ -117,6 +117,7 @@ Navidrome will pick them up when it scans the music library
 
 You can easily develop, test and tweak your SQL queries against your database (or a copy of) a SQLite-compatible database manager
 - For example, I use the open-sourced [SQLiteStudio](https://sqlitestudio.pl/) [github](https://github.com/pawelsalawa/sqlitestudio)
+
 Replace the `PLAYLIST` line with 
 
 ```
@@ -127,7 +128,9 @@ _(adjust the fields returned to taste)_
 
 ## Shoutouts
 
-I needed a way to validate the SQL.  Maybe I could have done that using Squirel, but I think not, it just looks like (yet another) SQL builder.  What I wanted was a parser with validation.  And [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) seems to tick all the boxes:
+I needed a way to validate the SQL.  Maybe I could have done that using Squirel, but I think not, it just looks like (yet another) SQL builder.  
+
+What I wanted was a parser with validation.  And [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) seems to tick all the boxes:
 - GitHub uses Tree-sitter to support in-browser symbolic code navigation in Git repositories
 - [Go bindings coutesy of Maxim Sukharev aka smacker](https://github.com/smacker/go-tree-sitter) with SQL support
 
