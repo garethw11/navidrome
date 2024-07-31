@@ -30,7 +30,7 @@ I wanted something similar for playlists so I can easily trigger a random album 
 
 So, I've had a quick play around with an idea I had to use SQL syntax to define playlists:
 
-_The music collection is a database so a SQL style smart query syntax should allow flexible, sophisticated queries to be created as playlist definitions_
+_The music collection is stored as a relational database, SQL lets us execute queries against a relational database, so a SQL-derived smart query syntax should allow us to create sophisticated playlist definitions_
 
 ## You can
  
