@@ -33,4 +33,25 @@ var _ = Describe("test Smart Query Factory", func() {
 			gomega.Expect(smartQuery.OrderBy).To(gomega.Equal("disc_number, track_number ASC"))
 		})
 	})
+
+	// Context("comma in PLAYLIST name", func() {
+	// 	It("correctly parses the smart playlist definition", func() {
+	// 		smartplaylistDefinition := []string{"PLAYLIST name: \"All The Hits, All The Time\", description: smart playlist",
+	// 			"album_id=(SELECT id FROM album ORDER BY random() LIMIT 1)",
+	// 			"ORDER BY disc_number, track_number ASC"}
+
+	// 		factory := SmartQueryFactory{smartplaylistDefinition}
+	// 		smartQuery, err := factory.CreateSmartQuery()
+	// 		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+	// 		validationErr := smartQuery.ValidateQuery()
+	// 		gomega.Expect(validationErr).ShouldNot(gomega.HaveOccurred())
+	// 		gomega.Expect(smartQuery.Name).To(gomega.Equal("All The Hits, All The Time"))
+	// 		gomega.Expect(smartQuery.Comment).To(gomega.Equal("smart playlist"))
+	// 		expectedSQL := strings.Join([]string{
+	// 			"album_id=(SELECT id FROM album ORDER BY random() /* inline comment */ LIMIT 1)",
+	// 			"ORDER BY disc_number, track_number ASC"}, "\n")
+	// 		gomega.Expect(smartQuery.Query).To(gomega.Equal(expectedSQL))
+	// 		gomega.Expect(smartQuery.OrderBy).To(gomega.Equal("disc_number, track_number ASC"))
+	// 	})
+	// })
 })

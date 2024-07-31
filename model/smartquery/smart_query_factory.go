@@ -31,6 +31,7 @@ func (r *SmartQueryFactory) CreateSmartQuery() (*SmartQuery, error) {
 	return &SmartQuery{Name: name, Comment: description, Query: query, OrderBy: "title"}, nil
 }
 
+// TODO this doesn't support , in name or description.  Do we want commas or use different char eg | or just ban commas?
 func (r *SmartQueryFactory) extractNameAndDescription(firstLine string) (string, string, bool) {
 	keyValues := strings.Split(strings.TrimSpace(firstLine), ",")
 	if len(keyValues) != 2 {
