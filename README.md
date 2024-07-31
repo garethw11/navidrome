@@ -25,12 +25,15 @@ For iOS [Amperfy](https://github.com/BLeeEZ/amperfy) is a great open-source iOS 
 Navidrome has been adding support for smart playlists for sometime now, great..._however...there are things I want a smart playlist to do that are not currently possible_
 
 I wanted to be able to do more...after all, more is more better, right?  
+
 I am an album-centric music listener _(is that a thing?  If it wasn't, it is now)_:rofl: and I really like the "Random Album" functionality in the Navidrome GUI.
 I wanted something similar for playlists so I can easily trigger a random album from a client such as Amperfy.  Or play the playlist on my (somewhat antiquated) Sonos system.
 
-So, I've had a quick play around with an idea I had to use SQL syntax to define playlists:
+So, I've had a play around with an idea I had to use SQL syntax to define playlists:
 
-_The music collection is stored as a relational database, SQL lets us execute queries against a relational database, so a SQL-derived smart query syntax should allow us to create sophisticated playlist definitions_
+- _The music collection is stored as a relational database
+- SQL lets us execute queries against a relational database
+- So, a SQL-derived smart query syntax should allow us to create sophisticated playlist definitions_
 
 ## You can
  
@@ -137,7 +140,7 @@ What I wanted was a parser with validation.  And [Tree-sitter](https://tree-sitt
 # And finally,
 
 __Any feedback is welcome!__ I created this fork for three reasons
-- To learn Go _(Go is so cute!)_
+- To learn Go _(awww, Go is so cute!)_
 - To learn git, github, etc _(grrrr, I still feel like a total noob, neccessary get better :persevere:)_
 - To offer the Navidrome community an idea with a working proof-of-concept that I hope they like
 There is always room for improvement and constructive criticism is welcome
@@ -150,4 +153,5 @@ It's unlikely this fork:
 
 **Disclaimer**: This fork may or may not be in an unstable or even broken state during development. 
 Please only use if you want to experiment with this code - for exmaple, you have already set up your own Navidrome development environment
+
 If you just want the official Navidrome go get it [here](https://github.com/navidrome/navidrome)
