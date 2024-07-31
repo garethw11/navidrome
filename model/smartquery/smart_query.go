@@ -24,10 +24,10 @@ func (r *SmartQuery) ValidateQuery() error {
 	}
 	fakeSelect := squirrel.Sql
 	fakeStatement := fakeSelect + r.Query
-	println("################################################")
-	fmt.Printf("SQL=[%v]", fakeStatement)
-	println()
-	println("################################################")
+	//println("################################################")
+	//fmt.Printf("SQL=[%v]", fakeStatement)
+	//println()
+	//println("################################################")
 	asBytes := []byte(fakeStatement)
 	parser := sitter.NewParser()
 	parser.SetLanguage(sql.GetLanguage())
